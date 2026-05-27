@@ -62,7 +62,8 @@
 
             try {
                 // This sends the client data to our backend server (which we will build next)
-                const response = await fetch('http://localhost:3000/api/draft', {
+                ```javascript
+   const response = await fetch('/api/draft', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, company, lastInteraction, status })
