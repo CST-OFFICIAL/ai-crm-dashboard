@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI CRM Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 40px; }
+        .container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        header { grid-column: span 2; margin-bottom: 20px; }
+        h1 { margin: 0; color: #333; }
+        p { color: #666; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e1e8ed; }
+        .badge { background: #e2e8f0; color: #4a5568; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        button { background: #0070f3; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        button:hover { background: #0051b3; }
+        textarea { width: 100%; height: 350px; padding: 15px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; font-family: inherit; resize: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>💼 AI-Powered CRM Dashboard</h1>
+        <p>Select a client to automatically draft a contextual follow-up email using AI.</p>
+    </header>
+
+    <div class="container">
+        <div>
+            <h2>Active Pipeline</h2>
+            
+            <div class="card">
+                <h3>Sarah Jenkins <span class="badge">Proposal Sent</span></h3>
+                <p><strong>Company:</strong> Apex Tech</p>
+                <p><strong>Last Note:</strong> Sent product demo last week, haven't heard back yet.</p>
+                <button onclick="draftEmail('Sarah Jenkins', 'Apex Tech', 'Sent product demo last week, haven\'t heard back yet.', 'Proposal Sent')">✨ Draft Follow-Up</button>
+            </div>
+
+            <div class="card">
+                <h3>Michael Chen <span class="badge">New Lead</span></h3>
+                <p><strong>Company:</strong> SaaSify</p>
+                <p><strong>Last Note:</strong> Met at a conference. Expressed major interest in upgrading their software security.</p>
+                <button onclick="draftEmail('Michael Chen', 'SaaSify', 'Met at a conference. Expressed major interest in upgrading their software security.', 'New Lead')">✨ Draft Follow-Up</button>
+            </div>
+        </div>
+
+        <div>
+            <h2>Generated AI Draft</h2>
+            <div class="card">
+                <p id="status-text" style="font-style: italic; color: #888;">Click "Draft Follow-Up" on any client to generate an email here...</p>
+                <textarea id="email-output" placeholder="AI email will appear here..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function draftEmail(name, company, lastInteraction, status) {
+            const statusText = document.getElementById('status-text');
+            const outputBox = document.getElementById('email-output');
+            
+            statusText.innerText = `Drafting email for ${name}...`;
+            outputBox.value = '';
+
+            try {
+                // This sends the client data to our backend server (which we will build next)
+                const response = await fetch('http://localhost:3000/api/draft', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, company, lastInteraction, status })
+                });
+
+                const data = await response.json();
+                outputBox.value = data.draft;
+                statusText.innerText = `To: ${name} (${company})`;
+            } catch (error) {
+                statusText.innerText = "Error generating draft. Is the backend running?";
+                outputBox.value = "Make sure your backend server is turned on!";
+            }
+        }
+    </script>
+</body>
+</html>
